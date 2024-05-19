@@ -23,20 +23,15 @@ def encrypt_file(file_path, password, encrypted_file_path):
     ciphertext = aesgcm.encrypt(nonce, plaintext, None)
 
     with open(encrypted_file_path, 'wb') as f:
-        f.write(base64.b64encode(ciphertext))
-        f.write(b':')
-        f.write(base64.b64encode(nonce))
-        f.write(b':')
-        f.write(base64.b64encode(salt))
+        f.write(base64.b64encode(ciphertext) + b'\n')
+        f.write(base64.b64encode(nonce) + b'\n')
+        f.write(base64.b64encode(salt) + b'\n')
 
 def decrypt_file(encrypted_file_path, password, decrypted_file_path):
     with open(encrypted_file_path, 'rb') as f:
-        parts = f.read().split(b':')
-
-    ciphertext = base64.b64decode(parts[0])
-    nonce = base64.b64decode(parts[1])
-    # print(len(nonce))
-    salt = base64.b64decode(parts[2])
+        ciphertext = base64.b64decode(f.readline().strip())
+        nonce = base64.b64decode(f.readline().strip())
+        salt = base64.b64decode(f.readline().strip())
 
     key = derive_key_from_password(password, salt)
 
@@ -57,20 +52,11 @@ def derive_key_from_password(password, salt):
     return kdf.derive(password.encode())
 
 # if __name__ == "__main__":
-#     password = "base64:5LeZYdrAfqPDyXBTh5pvmffkZG3m+wvfjbMKgLgQRHc="
-
-# #     # Encrypt the file
-# #     # encrypt_file("decryptClientFile/image.jpg", password, "decryptClientFile/image.jpg.enc")
-# #     # print("The file has been encrypted.")
-
-# #     # Decrypt the file
-# #     # decrypt_file("decryptClientFile/image.jpg.enc", password, "decryptClientFile/image1.jpg")
-# #     # print("The file has been decrypted.")
-
+#     password = "3cea76def039a224e90df5adb04339547be0254e9fe77b6df0bea9cbc1977a94"
 
 #     #Encrypt the file
 #     start_time = time.time()
-#     encrypt_file("decryptClientFile/file3_1.cfile", password, "decryptClientFile/file3_1.cfile.enc")
+#     encrypt_file("arduino_for_loop.h5", password, "arduino_for_loop.h5.enc")
 #     end_time = time.time()
 #     time_taken = end_time - start_time
 #     print(f"Time taken to Encrypt the file: {time_taken} seconds")
@@ -78,7 +64,7 @@ def derive_key_from_password(password, salt):
 
 #     #Decrypt the file
 #     start_time = time.time()
-#     decrypt_file("decryptClientFile/file3_1.cfile.enc", password, "decryptClientFile/file3_1.cfile")
+#     decrypt_file("arduino_for_loop.h5.enc", password, "arduino_for_loop.h5")
 #     end_time = time.time()
 #     time_taken = end_time - start_time
 #     print(f"Time taken to decrypt the file: {time_taken} seconds")
