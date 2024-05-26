@@ -18,7 +18,7 @@ class SafeSerpentApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("SafeSerpent")
-        self.geometry("440x320")
+        self.geometry("460x320")
         self.iconbitmap('./_internal/logo.ico')
         self.resizable(False, False)
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -62,12 +62,12 @@ class SafeSerpentApp(tk.Tk):
 
     def create_encryption_tab(self):
         ttk.Label(self.encryption_tab, text="Encrypt Your File", font=("Helvetica", 20)).grid(row=0, column=1, padx=10, pady=10)
-        ttk.Label(self.encryption_tab, text="Your File:").grid(row=1, column=0, padx=10, pady=10)
+        ttk.Label(self.encryption_tab, text="Your File : ",font=("Helvetica", 12)).grid(row=1, column=0, padx=10, pady=10)
         self.enc_file_path = ttk.Entry(self.encryption_tab, width=40)
         self.enc_file_path.grid(row=1, column=1, padx=10, pady=10)
         ttk.Button(self.encryption_tab, text="Browse", command=self.browse_enc_file,width=7).grid(row=1, column=2, padx=10, pady=10,)
 
-        ttk.Label(self.encryption_tab, text="Your Key:").grid(row=2, column=0, padx=10, pady=10)
+        ttk.Label(self.encryption_tab, text="Your Key :",font=("Helvetica", 12)).grid(row=2, column=0, padx=10, pady=10)
         self.enc_key = ttk.Entry(self.encryption_tab, width=40, show="*")
         self.enc_key.grid(row=2, column=1, padx=10, pady=10)
         self.enc_key_visible = False
@@ -81,12 +81,12 @@ class SafeSerpentApp(tk.Tk):
 
     def create_decryption_tab(self):
         ttk.Label(self.decryption_tab, text="Decrypt Your File", font=("Helvetica", 20)).grid(row=0, column=1, padx=10, pady=10)
-        ttk.Label(self.decryption_tab, text="Your File:").grid(row=1, column=0, padx=10, pady=10)
+        ttk.Label(self.decryption_tab, text="Your File : ",font=("Helvetica", 12)).grid(row=1, column=0, padx=10, pady=10)
         self.dec_file_path = ttk.Entry(self.decryption_tab, width=40)
         self.dec_file_path.grid(row=1, column=1, padx=10, pady=10)
         ttk.Button(self.decryption_tab, text="Browse", command=self.browse_dec_file, width=7).grid(row=1, column=2, padx=10, pady=10)
 
-        ttk.Label(self.decryption_tab, text="Your Key:").grid(row=2, column=0, padx=10, pady=10)
+        ttk.Label(self.decryption_tab, text="Your Key :",font=("Helvetica", 12)).grid(row=2, column=0, padx=10, pady=10)
         self.dec_key = ttk.Entry(self.decryption_tab, width=40, show="*")
         self.dec_key.grid(row=2, column=1, padx=10, pady=10)
         self.dec_key_visible = False
