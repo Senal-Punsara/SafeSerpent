@@ -1,236 +1,245 @@
-import tkinter as tk
-from tkinter import ttk
-import ttkbootstrap as ttk
-from tkinter import filedialog
-from ttkbootstrap.constants import *
-import time
+import hashlib
 import threading
-from tkinter import PhotoImage, Label
+import tkinter as tk
+from tkinter import ttk, filedialog, messagebox
+import ttkbootstrap as ttk
 from PIL import ImageTk, Image
-import os
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-from encrypt_decrypt import encrypt_file 
-from encrypt_decrypt import decrypt_file
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+import os
 import base64
-import secrets 
+import time
 
-ALGORITHM = "AES"
-KEY_SIZE = 32  # 256 bits
-ITERATION_COUNT = 100000
-TAG_LENGTH = 16  # 128 bits
-
-
-# Function to simulate loading
-def loading(root):
-    time.sleep(1)  
-    root.destroy()  # close the loading page
-
-def select_file(text_box):
-    file_path = filedialog.askopenfilename()
-    if file_path:
-        # Clear any previous text
-        text_box.delete('1.0', ttk.END)
-        # Display the selected file path
-        text_box.insert(ttk.END, file_path)
-
-def generate_key(password_entry):
-    # Generate a random 32-byte (256-bit) key
-    key = secrets.token_bytes(32)
-    # Convert the key to a hexadecimal string
-    key_hex = key.hex()
-    # Display the key in the password entry text box
-    password_entry.delete('1.0', tk.END)
-    password_entry.insert(tk.END, key_hex)
-
-def encrypt_process(main_window,text_box, password_entry, status_label,discription_label):
+class SafeSerpentApp(tk.Tk):
     
-    file_path = text_box.get('1.0', tk.END).strip()  # Get the selected file path
-    password = password_entry.get('1.0', tk.END).strip()  # Get the password
-    if file_path and password:
-        status_label.config(text="Encrypting ...",style='info.TLabel', background="", foreground="black")
-        discription_label.config(text="")  # Update label to indicate encryption process
-        main_window.update_idletasks()  # Update the label immediately
-        encrypted_file_path = file_path + ".enc"  # Define the path for encrypted file
+    def __init__(self):
+        super().__init__()
+        self.title("SafeSerpent")
+        self.geometry("460x320")
+        self.iconbitmap('./_internal/logo.ico')
+        self.resizable(False, False)
+        self.protocol("WM_DELETE_WINDOW", self.on_closing)
+        self.loading_screen()
+
+    def loading_screen(self):
+        self.loading_frame = ttk.Frame(self)
+        self.loading_frame.pack(expand=True, fill=tk.BOTH)
+
+        label = ttk.Label(self.loading_frame, text="SafeSerpent", font=("Helvetica", 28))
+        label.pack(pady=2)
+
+        original_image = Image.open('./_internal/logo.png')  # Replace with your image path
+        resized_image = original_image.resize((200, 200))
+        self.image = ImageTk.PhotoImage(resized_image)
+        image_label = ttk.Label(self.loading_frame, image=self.image)
+        image_label.pack(pady=5)
+
+        label = ttk.Label(self.loading_frame, text="Loading ...", font=("Helvetica", 12))
+        label.pack(pady=2)
+        progress = ttk.Progressbar(self.loading_frame, mode="determinate", style='Striped.Horizontal.TProgressbar')
+        progress.pack(pady=0)
+        progress.start()
+
+        self.after(1000, self.main_screen)  
+
+    def main_screen(self):
+        self.loading_frame.destroy()
+        
+        self.notebook = ttk.Notebook(self)
+        self.notebook.pack(expand=True, fill=tk.BOTH)
+
+        self.encryption_tab = ttk.Frame(self.notebook)
+        self.decryption_tab = ttk.Frame(self.notebook)
+        
+        self.notebook.add(self.encryption_tab, text="Encryption")
+        self.notebook.add(self.decryption_tab, text="Decryption")
+
+        self.create_encryption_tab()
+        self.create_decryption_tab()
+
+    def create_encryption_tab(self):
+        ttk.Label(self.encryption_tab, text="Encrypt Your File", font=("Helvetica", 20)).grid(row=0, column=1, padx=10, pady=10)
+        ttk.Label(self.encryption_tab, text="Your File : ",font=("Helvetica", 12)).grid(row=1, column=0, padx=10, pady=10)
+        self.enc_file_path = ttk.Entry(self.encryption_tab, width=40)
+        self.enc_file_path.grid(row=1, column=1, padx=10, pady=10)
+        ttk.Button(self.encryption_tab, text="Browse", command=self.browse_enc_file,width=7).grid(row=1, column=2, padx=10, pady=10,)
+
+        ttk.Label(self.encryption_tab, text="Your Key :",font=("Helvetica", 12)).grid(row=2, column=0, padx=10, pady=10)
+        self.enc_key = ttk.Entry(self.encryption_tab, width=40, show="*")
+        self.enc_key.grid(row=2, column=1, padx=10, pady=10)
+        self.enc_key_visible = False
+        self.toggle_enc_key_button = ttk.Button(self.encryption_tab, text="Show", command=self.toggle_enc_key_visibility, width=7)
+        self.toggle_enc_key_button.grid(row=2, column=2, padx=10, pady=10)
+
+        self.statusLabelEnc = ttk.Label(self.encryption_tab, text="", font=("Helvetica", 15), style='info.TLabel')
+        self.statusLabelEnc.grid(row=4, column=1, padx=10, pady=10)
+        
+        ttk.Button(self.encryption_tab, text="Encrypt", command=self.encrypt_file).grid(row=3, column=1, padx=10, pady=10)
+
+    def create_decryption_tab(self):
+        ttk.Label(self.decryption_tab, text="Decrypt Your File", font=("Helvetica", 20)).grid(row=0, column=1, padx=10, pady=10)
+        ttk.Label(self.decryption_tab, text="Your File : ",font=("Helvetica", 12)).grid(row=1, column=0, padx=10, pady=10)
+        self.dec_file_path = ttk.Entry(self.decryption_tab, width=40)
+        self.dec_file_path.grid(row=1, column=1, padx=10, pady=10)
+        ttk.Button(self.decryption_tab, text="Browse", command=self.browse_dec_file, width=7).grid(row=1, column=2, padx=10, pady=10)
+
+        ttk.Label(self.decryption_tab, text="Your Key :",font=("Helvetica", 12)).grid(row=2, column=0, padx=10, pady=10)
+        self.dec_key = ttk.Entry(self.decryption_tab, width=40, show="*")
+        self.dec_key.grid(row=2, column=1, padx=10, pady=10)
+        self.dec_key_visible = False
+        self.toggle_dec_key_button = ttk.Button(self.decryption_tab, text="Show", command=self.toggle_dec_key_visibility, width=7)
+        self.toggle_dec_key_button.grid(row=2, column=2, padx=10, pady=10)
+
+        self.statusLabelDec = ttk.Label(self.decryption_tab, text="", font=("Helvetica", 15), style='info.TLabel')
+        self.statusLabelDec.grid(row=4, column=1, padx=10, pady=10)
+        
+        ttk.Button(self.decryption_tab, text="Decrypt", command=self.decrypt_file).grid(row=3, column=1, padx=10, pady=10)
+
+    def browse_enc_file(self):
+        file_path = filedialog.askopenfilename()
+        self.enc_file_path.delete(0, tk.END)
+        self.enc_file_path.insert(0, file_path)
+
+    def browse_dec_file(self):
+        file_path = filedialog.askopenfilename()
+        self.dec_file_path.delete(0, tk.END)
+        self.dec_file_path.insert(0, file_path)
+
+    def toggle_enc_key_visibility(self):
+        if self.enc_key_visible:
+            self.enc_key.config(show="*")
+            self.toggle_enc_key_button.config(text="Show")
+        else:
+            self.enc_key.config(show="")
+            self.toggle_enc_key_button.config(text="Hide")
+        self.enc_key_visible = not self.enc_key_visible
+
+    def toggle_dec_key_visibility(self):
+        if self.dec_key_visible:
+            self.dec_key.config(show="*")
+            self.toggle_dec_key_button.config(text="Show")
+        else:
+            self.dec_key.config(show="")
+            self.toggle_dec_key_button.config(text="Hide")
+        self.dec_key_visible = not self.dec_key_visible
+
+    def get_hashed_key(self,user_input):
+        # Use SHA-256 to hash the input
+        hashed_key = hashlib.sha256(user_input.encode()).digest()
+        return hashed_key
+
+    def encrypt_file(self):
+        # Show the encrypting message
+        self.update_status_enc("Encrypting ...",2)
+        
+        file_path = self.enc_file_path.get()
+        key = hashlib.sha256(self.enc_key.get().encode()).digest()
+
+        if not file_path or not key:
+            messagebox.showerror("Error", "All fields are required.")
+            self.update_status_enc("",2)
+            return
+
+        # Start the encryption in a separate thread
+        threading.Thread(target=self.encrypt_file_thread, args=(file_path, key)).start()
+
+    def encrypt_file_thread(self, file_path, key):
         try:
-            status_label.config(text="")
-            status_label.config(text="Encrypting ...",style='info.TLabel', background="", foreground="black")
-            encrypt_file(file_path, password, encrypted_file_path)  # Call encrypt_file function
-            status_label.config(text=f"Successful !", style='info.TLabel', background="", foreground="green")  # Update label upon success
-            discription_label.config(text=f"Encrypted file: {encrypted_file_path}")
-            print("File encrypted successfully.")
+            encrypted_path = self.perform_encryption(file_path, key)
+            self.update_status_enc("File Encrypted Successfully !", 0) 
+            messagebox.showinfo("Success", f"File Encrypted Successfully!\nEncrypted File: {encrypted_path}")
         except Exception as e:
-            status_label.config(text="Encryption failed !", background="", foreground="red")  # Update label if encryption fails
-            print(f"Encryption failed: {e}")
-            discription_label.config(text=e)
-       
+            self.update_status_enc("Encryption Failed",1) 
+            messagebox.showerror("Error", f"Encryption failed: {str(e)}")
+        finally:
+            self.update_status_enc("",2)  # Hide the status message
 
-def decrypt_process(main_window,text_box, password_entry, status_label,discription_label):
-    file_path = text_box.get('1.0', tk.END).strip()  # Get the selected file path
-    password = password_entry.get('1.0', tk.END).strip()  # Get the password
-   
-    if file_path and password:
-        status_label.config(text="      Decrypting ...      ",style='info.TLabel', background="", foreground="black")
-        discription_label.config(text="                                                                                     ")  
-        main_window.update_idletasks()  
-        decrypted_file_path = file_path.replace('.enc', '')
+    def decrypt_file(self):
+        # Show the decrypting message
+        self.update_status_dec("Decrypting ...",2)
+        
+        file_path = self.dec_file_path.get()
+        key = hashlib.sha256(self.dec_key.get().encode()).digest()
 
+        if not file_path or not key:
+            messagebox.showerror("Error", "All fields are required.")
+            self.update_status_dec("",2)
+            return
+
+        # Start the decryption in a separate thread
+        threading.Thread(target=self.decrypt_file_thread, args=(file_path, key)).start()
+
+    def decrypt_file_thread(self, file_path, key):
         try:
-            status_label.config(text="")
-            status_label.config(text="Decrypting ...",style='info.TLabel', background="", foreground="black")
-            decrypt_file(file_path, password, decrypted_file_path)  # Call decrypt_file function
-            status_label.config(text=f"Successful !", style='info.TLabel', background="", foreground="green")  # Update label upon success
-            discription_label.config(text=f"Decrypted file: {decrypted_file_path}")
-            print("File decrypted successfully.")
+            decrypted_path = self.perform_decryption(file_path, key)
+            self.update_status_dec("File Decrypted Successfully !",0)
+            messagebox.showinfo("Success", f"File Decrypted Successfully!\nDecrypted File: {decrypted_path}")
         except Exception as e:
-            status_label.config(text="Decryption failed !", background="", foreground="red")  # Update label if decryption fails
-            print(f"Decryption failed: {e}")
-            discription_label.config(text="Please check you selected the correct file and the key.")
+            self.update_status_dec("Decryption Failed",1)
+            messagebox.showerror("Error", f"Decryption Failed: Please Check Your Selected File or the Key.")
+        finally:
+            self.update_status_dec("",2)  # Hide the status message
 
-def open_main_window():
-    main_window = ttk.Window()
-    main_window.title("SafeSerpent")
-    main_window.iconbitmap('./_internal/logo.ico')
-    main_window.geometry('800x600')
-
-    tab_control = ttk.Notebook(main_window)
-
-    tab1 = ttk.Frame(tab_control)
-    tab_control.add(tab1, text='Encryption')
-    topic1 = ttk.Label(tab1, text="Encrypt Your File", font=("Arial", 24),style='info.TLabel', )
-    topic1.pack(pady=30)
-
-    file_frame = ttk.Frame(tab1)
-    file_label = ttk.Label(file_frame, text="Select File: ", font=("Arial", 15))
-    file_label.pack(side=tk.LEFT, padx=5, pady=5)
+    def update_status_enc(self, message, tag):
+        if tag == 0:
+            self.statusLabelEnc.config(text=message, style='success.TLabel')
+        elif tag == 1:
+            self.statusLabelEnc.config(text=message, style='danger.TLabel')
+        else:
+            self.statusLabelEnc.config(text=message, style='info.TLabel')
+        self.statusLabelEnc.update_idletasks()
     
-    text_box = ttk.Text(file_frame, height=1, width=50)
-    text_box.pack(side=tk.LEFT, padx=5, pady=5)
+    def update_status_dec(self, message, tag):
+        if tag == 0:
+            self.statusLabelDec.config(text=message, style='success.TLabel')
+        elif tag == 1:
+            self.statusLabelDec.config(text=message, style='danger.TLabel')
+        else:
+            self.statusLabelDec.config(text=message, style='info.TLabel')
+        self.statusLabelDec.update_idletasks()
+
+
+    # Function to encrypt a file in chunks
+    def perform_encryption(self,input_file, key):
+        chunk_size = 64 * 1024  # 64KB chunks
+        encrypted_file_path = input_file + ".enc"
+        nonce = os.urandom(12)
     
-    file_button = ttk.Button(file_frame, text="Browse", command=lambda: select_file(text_box))
-    file_button.pack(side=tk.LEFT, padx=5, pady=5)
+        aesgcm = AESGCM(key)
     
-    file_frame.pack(pady=5)
-
-    password_frame = ttk.Frame(tab1)
-    password_label = ttk.Label(password_frame, text="  Your Key:", font=("Arial", 15))
-    password_label.pack(side=tk.LEFT, padx=5, pady=5)
+        with open(input_file, 'rb') as f_in, open(encrypted_file_path, 'wb') as f_out:
+            f_out.write(nonce)
     
-    password_entry = ttk.Text(password_frame, height=1, width=50)
-    password_entry.pack(side=tk.LEFT, padx=10, pady=5)
-    password_button = ttk.Button(password_frame, text="Create Key", command=lambda: generate_key(password_entry))
-    password_button.pack(side=tk.LEFT, padx=0, pady=5)
+            while True:
+                chunk = f_in.read(chunk_size)
+                if len(chunk) == 0:
+                    break
+                ciphertext = aesgcm.encrypt(nonce, chunk, None)
+                f_out.write(ciphertext)
+        return encrypted_file_path
     
-    password_frame.pack(pady=5)
+    # Function to decrypt a file in chunks
+    def perform_decryption(self,input_file, key):
+        chunk_size = 64 * 1024  # 64KB chunks
+        decrypted_file_path = input_file[:-4]
+        with open(input_file, 'rb') as f_in, open(decrypted_file_path, 'wb') as f_out:
+            nonce = f_in.read(12)
+            aesgcm = AESGCM(key)
     
+            while True:
+                chunk = f_in.read(chunk_size + 16)
+                if len(chunk) == 0:
+                    break
+                plaintext = aesgcm.decrypt(nonce, chunk, None)
+                f_out.write(plaintext)
+        return decrypted_file_path
 
-    encrypt_button = ttk.Button(tab1, text="Encrypt",  command=lambda: encrypt_process(main_window,text_box, password_entry,status_label,discription_label))
-    encrypt_button.pack(pady=20)
+    def on_closing(self):
+        self.destroy()
 
-    status_label = ttk.Label(tab1, text="", font=("Arial", 15), style='info.TLabel')
-    status_label.pack(pady=5) 
-    discription_label = ttk.Label(tab1, text="", font=("Arial", 10))
-    discription_label.pack(pady=5)
-    style = ttk.Style()
-    style.configure("Custom.TFrame", background="white")
-
-#decryption
-    tab2 = ttk.Frame(tab_control)
-    tab_control.pack(expand=1, fill='both')
-    tab_control.add(tab2, text='Decryption')
-    topic2 = ttk.Label(tab2, text=" Decrypt Your File", font=("Arial", 24),style='info.TLabel', )
-    topic2.pack(pady=30)
-
-    file_frame2 = ttk.Frame(tab2)
-    file_label2 = ttk.Label(file_frame2, text="Select File: ", font=("Arial", 15))
-    file_label2.pack(side=tk.LEFT, padx=5, pady=5)
-    
-    text_box2 = ttk.Text(file_frame2, height=1, width=50)
-    text_box2.pack(side=tk.LEFT, padx=5, pady=5)
-    
-    file_button2 = ttk.Button(file_frame2, text="Browse", command=lambda: select_file(text_box2))
-    file_button2.pack(side=tk.LEFT, padx=5, pady=5)
-    
-    file_frame2.pack(pady=5)
-
-    password_frame2 = ttk.Frame(tab2)
-    password_label2 = ttk.Label(password_frame2, text="  Your Key:", font=("Arial", 15))
-    password_label2.pack(side=tk.LEFT, padx=5, pady=5)
-    
-    password_entry2 = ttk.Text(password_frame2, height=1, width=50)
-    password_entry2.pack(side=tk.LEFT, padx=10, pady=5)
-
-    password_button = ttk.Button(password_frame2, text="Create Key", command=lambda: generate_key(password_entry2), state='disabled')
-    password_button.pack(side=tk.LEFT, padx=0, pady=5)
-    
-    password_frame2.pack(pady=5)
-    
-
-    decrypt_button = ttk.Button(tab2, text="Decrypt",  command=lambda: decrypt_process(main_window,text_box2, password_entry2,status_label2,discription_label2))
-    decrypt_button.pack(pady=20)
-
-    status_label2 = ttk.Label(tab2, text="", font=("Arial", 15), style='info.TLabel')
-    status_label2.pack(pady=5) 
-    discription_label2 = ttk.Label(tab2, text="", font=("Arial", 10))
-    discription_label2.pack(pady=5)
-    style = ttk.Style()
-    style.configure("Custom.TFrame", background="white")
-
-    main_window.mainloop()
-
-# Function to open the loading page
-def open_loading_page():
-    loading_page = ttk.Window()
-    loading_page.title("SafeSerpent")
-    loading_page.iconbitmap('./_internal/logo.ico')
-    loading_page.geometry('800x600')
-    loading_page.resizable(False, False)
-
-    img = Image.open('./_internal/logo.png')
-    img = img.resize((400, 400))
-    image = ImageTk.PhotoImage(img)
-
-    image_label = tk.Label(loading_page, image=image)
-    image_label.pack(expand=True, pady=10)
-
-    software_name = ttk.Label(loading_page, text="SafeSerpent", font=("Arial", 32))
-    software_name.pack(pady=5)
-
-    label = ttk.Label(loading_page, text="Loading ...",style='primary.TLabel', font=("Arial", 15))
-    label.pack(pady=5)
-
-    progressbar_frame = ttk.Frame(loading_page, borderwidth=2, relief="groove")
-    progressbar_frame.pack(pady=5)
-
-    progressbar = ttk.Progressbar(progressbar_frame, mode="indeterminate", length=200)
-    progressbar.pack(pady=5)
-    
-    def update_progress():
-        bartime = 0
-        value = 0
-        tag = 0
-        while bartime <= 180:
-            progressbar["value"] = value
-            bartime += 1
-            if value >= 0:
-                tag = 0
-            else:
-                tag = 1
-            if tag == 0:
-                value += 1
-            else:
-                value -= 1
-            time.sleep(0.01)
-            progressbar.update()
-
-    update_progress()
-
-    threading.Thread(target=loading, args=(loading_page,)).start()
-
-    loading_page.mainloop()
-
-    open_main_window()
-
-open_loading_page()
+if __name__ == "__main__":
+    app = SafeSerpentApp()
+    app.mainloop()
