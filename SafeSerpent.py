@@ -43,7 +43,7 @@ class SafeSerpentApp(tk.Tk):
         progress.pack(pady=0)
         progress.start()
 
-        self.after(1000, self.main_screen)  
+        self.after(6000, self.main_screen)  
 
     def main_screen(self):
         self.loading_frame.destroy()
@@ -221,10 +221,23 @@ class SafeSerpentApp(tk.Tk):
                 f_out.write(ciphertext)
         return encrypted_file_path
     
+    def add_decrypted_to_filename(self,file_path):
+        # Split the file path into directory and base name
+        directory, base_name = os.path.split(file_path)
+        # Split the base name into file name and extension
+        file_name, file_extension = os.path.splitext(base_name)
+        # Create the new file name with "(decrypted)" added
+        new_file_name = f"{file_name}(decrypted){file_extension}"
+        # Combine the directory and the new file name to get the final path
+        new_file_path = os.path.join(directory, new_file_name)
+        return new_file_path
+
+
     # Function to decrypt a file in chunks
     def perform_decryption(self,input_file, key):
         chunk_size = 64 * 1024  # 64KB chunks
-        decrypted_file_path = input_file[:-4]
+        decrypted_file_path = self.add_decrypted_to_filename(input_file[:-4])
+        print
         with open(input_file, 'rb') as f_in, open(decrypted_file_path, 'wb') as f_out:
             nonce = f_in.read(12)
             aesgcm = AESGCM(key)
@@ -236,7 +249,8 @@ class SafeSerpentApp(tk.Tk):
                 plaintext = aesgcm.decrypt(nonce, chunk, None)
                 f_out.write(plaintext)
         return decrypted_file_path
-
+    
+    
     def on_closing(self):
         self.destroy()
 
