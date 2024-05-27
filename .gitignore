@@ -160,3 +160,7 @@ cython_debug/
 #.idea/
 
 output/
+
+# for testing
+test.py 
+encrypt_decrypt.py
