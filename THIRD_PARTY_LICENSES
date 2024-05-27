@@ -1,0 +1,11 @@
+This project incorporates the following third-party libraries:
+
+1. ttkbootstrap (MIT License)
+   URL to the MIT License: https://github.com/israel-dryer/ttkbootstrap/blob/master/LICENSE
+      
+2. Pillow (PIL) (HPND License)
+   URL to the HPND License: https://github.com/python-pillow/Pillow/blob/main/LICENSE
+
+3.cryptography (Apache License and BSD License)  
+   URL to the Apache License: https://github.com/pyca/cryptography/blob/main/LICENSE.APACHE
+   URL to the BSD License: https://github.com/pyca/cryptography/blob/main/LICENSE.BSD
