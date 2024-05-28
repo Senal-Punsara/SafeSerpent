@@ -51,7 +51,7 @@ SafeSerpent allows you to encrypt and decrypt files with ease. Below are the ins
 ### Encrypting a File
 
 <div align="center">
-  <img src="https://github.com/Senal-Punsara/SafeSerpent/blob/dev/screenshots/encryption_tab.png" alt="encryption_tab" width="500" height="500">
+  <img src="https://github.com/Senal-Punsara/SafeSerpent/blob/dev/screenshots/encryption_tab.png" alt="encryption_tab" width="500" height="300">
 </div>
 
 1. Navigate to the Encryption Tab: Click on the "Encryption" tab in the application.
@@ -70,7 +70,7 @@ SafeSerpent allows you to encrypt and decrypt files with ease. Below are the ins
 ### Decrypting a File
 
 <div align="center">
-  <img src="https://github.com/Senal-Punsara/SafeSerpent/blob/dev/screenshots/decryption_tab.png" alt="decryption_tab" width="500" height="500">
+  <img src="https://github.com/Senal-Punsara/SafeSerpent/blob/dev/screenshots/decryption_tab.png" alt="decryption_tab" width="500" height="300">
 </div>
 
 1. Navigate to the Decryption Tab: Click on the "Decryption" tab in the application.
