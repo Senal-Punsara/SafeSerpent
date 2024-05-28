@@ -1,7 +1,6 @@
 
 # SafeSerpent
-![logo](https://github.com/Senal-Punsara/SafeSerpent/blob/main/_internal/logo.png)
-<img src="https://github.com/Senal-Punsara/SafeSerpent/blob/main/_internal/logo.png" alt="logo" width="100" height="100">
+<img src="https://github.com/Senal-Punsara/SafeSerpent/blob/main/_internal/logo.png" alt="logo" width="500" height="500">
 Welcome to SafeSerpent! This software is designed to provide a secure and straightforward way to encrypt and decrypt your files. Whether you're looking to protect sensitive information or simply want to ensure your personal data is safe, SafeSerpent offers an easy-to-use solution.
 
 ## Features
