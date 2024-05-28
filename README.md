@@ -105,3 +105,6 @@ This project incorporates with third-party libraries. See the [THIRD_PARTY_LICEN
 
 ## Contact
 For any inquiries or support, please send a mail at kksenalpunsara@gmail.com.
+
+##
+Thank you for using SafeSerpent! Secure your files with confidence.
