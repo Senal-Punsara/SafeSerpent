@@ -31,7 +31,7 @@ class SafeSerpentApp(tk.Tk):
         label = ttk.Label(self.loading_frame, text="SafeSerpent", font=("Helvetica", 28))
         label.pack(pady=2)
 
-        original_image = Image.open('./_internal/logo.png')  # Replace with your image path
+        original_image = Image.open('./_internal/logo.png')  
         resized_image = original_image.resize((200, 200))
         self.image = ImageTk.PhotoImage(resized_image)
         image_label = ttk.Label(self.loading_frame, image=self.image)
@@ -132,7 +132,7 @@ class SafeSerpentApp(tk.Tk):
         return hashed_key
 
     def encrypt_file(self):
-        # Show the encrypting message
+        
         self.update_status_enc("Encrypting ...",2)
         
         file_path = self.enc_file_path.get()
@@ -155,10 +155,10 @@ class SafeSerpentApp(tk.Tk):
             self.update_status_enc("Encryption Failed",1) 
             messagebox.showerror("Error", f"Encryption failed: {str(e)}")
         finally:
-            self.update_status_enc("",2)  # Hide the status message
+            self.update_status_enc("",2)  
 
     def decrypt_file(self):
-        # Show the decrypting message
+       
         self.update_status_dec("Decrypting ...",2)
         
         file_path = self.dec_file_path.get()
@@ -181,7 +181,7 @@ class SafeSerpentApp(tk.Tk):
             self.update_status_dec("Decryption Failed",1)
             messagebox.showerror("Error", f"Decryption Failed: Please Check Your Selected File or the Key.")
         finally:
-            self.update_status_dec("",2)  # Hide the status message
+            self.update_status_dec("",2)  
 
     def update_status_enc(self, message, tag):
         if tag == 0:
