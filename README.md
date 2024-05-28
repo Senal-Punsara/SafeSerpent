@@ -45,3 +45,55 @@ or
 ```bash
 python3 SafeSerpent.py 
 ```
+## Usage
+SafeSerpent allows you to encrypt and decrypt files with ease. Below are the instructions for using the application.
+
+### Encrypting a File
+
+1. Navigate to the Encryption Tab: Click on the "Encryption" tab in the application.
+
+2. Select Your File:
+- Click the "Browse" button next to the "Your File" field.
+- Choose the file you want to encrypt from your file system.
+3. Enter Your Key:
+- In the "Your Key" field, enter a secure key. This key will be used to encrypt the file. Make sure to remember this key, as you will need it to decrypt the file later.
+- You can toggle the visibility of the key by clicking the "Show" button.
+4. Encrypt the File:
+- Click the "Encrypt" button to start the encryption process.
+- A status message will indicate the progress, and a message box will confirm the success once the file is encrypted.
+- The encrypted file will be saved with a .enc extension in the same directory as the original file.
+
+### Decrypting a File
+
+1. Navigate to the Decryption Tab: Click on the "Decryption" tab in the application.
+
+2. Select Your Encrypted File:
+- Click the "Browse" button next to the "Your File" field.
+- Choose the encrypted file (with a .enc extension) you want to decrypt.
+3. Enter Your Key:
+- In the "Your Key" field, enter the same key you used for encryption.
+- You can toggle the visibility of the key by clicking the "Show" button.
+4. Decrypt the File:
+- Click the "Decrypt" button to start the decryption process.
+- A status message will indicate the progress, and a message box will confirm the success once the file is decrypted.
+- The decrypted file will be saved in the same directory with "(decrypted)" added to end of its name.
+
+## Contributing
+
+We welcome contributions to SafeSerpent! If you have any ideas, bug reports, or feature requests, please open an issue on GitHub. You can also fork the repository and submit a pull request.
+### Steps to Contribute
+1. Fork the repository.
+2. Create a new branch (git checkout -b feature-branch).
+3. Make your changes and commit them (git commit -am 'Add new feature <feature name>').
+4. Push to the branch (git push origin feature-branch).
+5. Open a pull request.
+6. Please adhere to this project's `code of conduct`.
+
+## License
+
+SafeSerpent is licensed under the MIT License. See the [LICENSE](https://github.com/Senal-Punsara/SafeSerpent/blob/dev/LICENSE) file for more details.
+
+This project incorporates with third-party libraries. See the [THIRD_PARTY_LICENSES](https://github.com/Senal-Punsara/SafeSerpent/blob/dev/THIRD_PARTY_LICENSES) file for more details.
+
+## Contact
+For any inquiries or support, please send a mail at kksenalpunsara@gmail.com.
