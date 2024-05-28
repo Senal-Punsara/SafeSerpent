@@ -15,7 +15,13 @@ Welcome to SafeSerpent! This software is designed to provide a secure and straig
 ## Getting Started
 
 ### Setup File
+You can easily install the software by running the following setup file. The setup file is only available for the Windows platform. For other platforms, setup files will be available as soon as possible!
+
 Windows : click [here](https://drive.google.com/file/d/1HdDqxmrsizE6aHMKXw9eka8Z4DyrVbqT/view?usp=sharing) to download
+
+MacOS : not yet available
+
+Linux : not yet available
 
 ### Prerequisites
 
