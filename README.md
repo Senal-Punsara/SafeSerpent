@@ -9,12 +9,10 @@ Welcome to SafeSerpent! This software is designed to provide a secure and straig
 - **File Encryption:** Securely encrypt your files using AES-GCM-256 algorithm.
 - **File Decryption:** Easily decrypt files that were previously encrypted with SafeSerpent.
 - **User-Friendly Interface:** Intuitive user interface for seamless operation.
-- **Cross-Platform:** Compatible with Windows, macOS, and Linux.(Setup file is only available for Windows. For other platroms please refer **Getting Started** section)
+- **Cross-Platform:** Compatible with Windows, macOS, and Linux. (Setup file is only available for Windows. For other platroms please refer **Getting Started** section)
 - **Open Source:** Fully open-source and available on GitHub.
 
-## Getting Started
-
-### Setup File
+## Install via Setup File
 You can easily install the software by running the following setup file. The setup file is only available for the Windows platform. For other platforms, setup files will be available as soon as possible!
 
 Windows : click [here](https://drive.google.com/file/d/1HdDqxmrsizE6aHMKXw9eka8Z4DyrVbqT/view?usp=sharing) to download
@@ -22,6 +20,9 @@ Windows : click [here](https://drive.google.com/file/d/1HdDqxmrsizE6aHMKXw9eka8Z
 MacOS : not yet available
 
 Linux : not yet available
+
+## Getting Started
+
 
 ### Prerequisites
 
@@ -94,7 +95,7 @@ SafeSerpent allows you to encrypt and decrypt files with ease. Below are the ins
 
 ## Contributing
 
-We welcome contributions to SafeSerpent! If you have any ideas, bug reports, or feature requests, please open an issue on GitHub. You can also fork the repository and submit a pull request.
+We welcome contributions to SafeSerpent! If you have any ideas, bug reports, or feature requests, please open an [issue](https://docs.github.com/en/issues/tracking-your-work-with-issues/creating-an-issue) on GitHub. You can also fork the repository and submit a pull request.
 ### Steps to Contribute
 1. Fork the repository.
 2. Create a new branch (git checkout -b feature-branch).
