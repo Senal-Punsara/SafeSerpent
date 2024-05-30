@@ -9,7 +9,6 @@ Welcome to SafeSerpent! This software is designed to provide a secure and straig
 - **File Encryption:** Securely encrypt your files using AES-GCM-256 algorithm.
 - **File Decryption:** Easily decrypt files that were previously encrypted with SafeSerpent.
 - **User-Friendly Interface:** Intuitive user interface for seamless operation.
-- **Cross-Platform:** Compatible with Windows, macOS, and Linux. (Setup file is only available for Windows. For other platroms please refer **Getting Started** section)
 - **Open Source:** Fully open-source and available on GitHub.
 
 ## Install via Setup File
@@ -26,7 +25,7 @@ Linux : not yet available
 
 ### Prerequisites
 
-To use SafeSerpent without the setup file, you need to have Python 3 installed on your system. You can download it from the [official Python website](https://www.python.org/downloads/).
+To use SafeSerpent without the setup file, you need to have Python 3 installed on your system. You can download it from the [official Python website](https://www.python.org/downloads/). Make sure [git](https://git-scm.com/downloads) and [pip](https://pip.pypa.io/en/stable/installation/#installation) are installed in your machine.
 
 ### Installation
 
