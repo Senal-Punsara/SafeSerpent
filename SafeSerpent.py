@@ -9,6 +9,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from tkinter import PhotoImage
 import os
 import base64
 import time
@@ -18,8 +19,10 @@ class SafeSerpentApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("SafeSerpent")
-        self.geometry("460x320")
-        self.iconbitmap('./_internal/logo.ico')
+        self.geometry("560x320")
+        logo = PhotoImage(file='./_internal/logo.png')
+        #self.iconbitmap('./_internal/logo.ico')
+        self.iconphoto(False, logo)
         self.resizable(False, False)
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.loading_screen()
@@ -43,7 +46,7 @@ class SafeSerpentApp(tk.Tk):
         progress.pack(pady=0)
         progress.start()
 
-        self.after(6000, self.main_screen)  
+        self.after(5000, self.main_screen)  
 
     def main_screen(self):
         self.loading_frame.destroy()
@@ -61,42 +64,48 @@ class SafeSerpentApp(tk.Tk):
         self.create_decryption_tab()
 
     def create_encryption_tab(self):
-        ttk.Label(self.encryption_tab, text="Encrypt Your File", font=("Helvetica", 20)).grid(row=0, column=1, padx=10, pady=10)
-        ttk.Label(self.encryption_tab, text="Your File : ",font=("Helvetica", 12)).grid(row=1, column=0, padx=10, pady=10)
-        self.enc_file_path = ttk.Entry(self.encryption_tab, width=40)
-        self.enc_file_path.grid(row=1, column=1, padx=10, pady=10)
-        ttk.Button(self.encryption_tab, text="Browse", command=self.browse_enc_file,width=7).grid(row=1, column=2, padx=10, pady=10,)
+        container = ttk.Frame(self.encryption_tab)
+        container.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
-        ttk.Label(self.encryption_tab, text="Your Key :",font=("Helvetica", 12)).grid(row=2, column=0, padx=10, pady=10)
-        self.enc_key = ttk.Entry(self.encryption_tab, width=40, show="*")
+        ttk.Label(container, text="Encrypt Your File", font=("Helvetica", 20)).grid(row=0, column=1, padx=10, pady=10)
+        ttk.Label(container, text="Your File : ", font=("Helvetica", 12)).grid(row=1, column=0, padx=10, pady=10)
+        self.enc_file_path = ttk.Entry(container, width=40)
+        self.enc_file_path.grid(row=1, column=1, padx=10, pady=10)
+        ttk.Button(container, text="Browse", command=self.browse_enc_file, width=7).grid(row=1, column=2, padx=10, pady=10)
+
+        ttk.Label(container, text="Your Key :", font=("Helvetica", 12)).grid(row=2, column=0, padx=10, pady=10)
+        self.enc_key = ttk.Entry(container, width=40, show="*")
         self.enc_key.grid(row=2, column=1, padx=10, pady=10)
         self.enc_key_visible = False
-        self.toggle_enc_key_button = ttk.Button(self.encryption_tab, text="Show", command=self.toggle_enc_key_visibility, width=7)
+        self.toggle_enc_key_button = ttk.Button(container, text="Show", command=self.toggle_enc_key_visibility, width=7)
         self.toggle_enc_key_button.grid(row=2, column=2, padx=10, pady=10)
 
-        self.statusLabelEnc = ttk.Label(self.encryption_tab, text="", font=("Helvetica", 15), style='info.TLabel')
+        self.statusLabelEnc = ttk.Label(container, text="", font=("Helvetica", 15), style='info.TLabel')
         self.statusLabelEnc.grid(row=4, column=1, padx=10, pady=10)
         
-        ttk.Button(self.encryption_tab, text="Encrypt", command=self.encrypt_file).grid(row=3, column=1, padx=10, pady=10)
+        ttk.Button(container, text="Encrypt", command=self.encrypt_file).grid(row=3, column=1, padx=10, pady=10)
 
     def create_decryption_tab(self):
-        ttk.Label(self.decryption_tab, text="Decrypt Your File", font=("Helvetica", 20)).grid(row=0, column=1, padx=10, pady=10)
-        ttk.Label(self.decryption_tab, text="Your File : ",font=("Helvetica", 12)).grid(row=1, column=0, padx=10, pady=10)
-        self.dec_file_path = ttk.Entry(self.decryption_tab, width=40)
-        self.dec_file_path.grid(row=1, column=1, padx=10, pady=10)
-        ttk.Button(self.decryption_tab, text="Browse", command=self.browse_dec_file, width=7).grid(row=1, column=2, padx=10, pady=10)
+        container = ttk.Frame(self.decryption_tab)
+        container.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
-        ttk.Label(self.decryption_tab, text="Your Key :",font=("Helvetica", 12)).grid(row=2, column=0, padx=10, pady=10)
-        self.dec_key = ttk.Entry(self.decryption_tab, width=40, show="*")
+        ttk.Label(container, text="Decrypt Your File", font=("Helvetica", 20)).grid(row=0, column=1, padx=10, pady=10)
+        ttk.Label(container, text="Your File : ", font=("Helvetica", 12)).grid(row=1, column=0, padx=10, pady=10)
+        self.dec_file_path = ttk.Entry(container, width=40)
+        self.dec_file_path.grid(row=1, column=1, padx=10, pady=10)
+        ttk.Button(container, text="Browse", command=self.browse_dec_file, width=7).grid(row=1, column=2, padx=10, pady=10)
+
+        ttk.Label(container, text="Your Key :", font=("Helvetica", 12)).grid(row=2, column=0, padx=10, pady=10)
+        self.dec_key = ttk.Entry(container, width=40, show="*")
         self.dec_key.grid(row=2, column=1, padx=10, pady=10)
         self.dec_key_visible = False
-        self.toggle_dec_key_button = ttk.Button(self.decryption_tab, text="Show", command=self.toggle_dec_key_visibility, width=7)
+        self.toggle_dec_key_button = ttk.Button(container, text="Show", command=self.toggle_dec_key_visibility, width=7)
         self.toggle_dec_key_button.grid(row=2, column=2, padx=10, pady=10)
 
-        self.statusLabelDec = ttk.Label(self.decryption_tab, text="", font=("Helvetica", 15), style='info.TLabel')
+        self.statusLabelDec = ttk.Label(container, text="", font=("Helvetica", 15), style='info.TLabel')
         self.statusLabelDec.grid(row=4, column=1, padx=10, pady=10)
         
-        ttk.Button(self.decryption_tab, text="Decrypt", command=self.decrypt_file).grid(row=3, column=1, padx=10, pady=10)
+        ttk.Button(container, text="Decrypt", command=self.decrypt_file).grid(row=3, column=1, padx=10, pady=10)
 
     def browse_enc_file(self):
         file_path = filedialog.askopenfilename()
@@ -126,21 +135,21 @@ class SafeSerpentApp(tk.Tk):
             self.toggle_dec_key_button.config(text="Hide")
         self.dec_key_visible = not self.dec_key_visible
 
-    def get_hashed_key(self,user_input):
+    def get_hashed_key(self, user_input):
         # Use SHA-256 to hash the input
         hashed_key = hashlib.sha256(user_input.encode()).digest()
         return hashed_key
 
     def encrypt_file(self):
         
-        self.update_status_enc("Encrypting ...",2)
+        self.update_status_enc("Encrypting ...", 2)
         
         file_path = self.enc_file_path.get()
         key = hashlib.sha256(self.enc_key.get().encode()).digest()
 
         if not file_path or not key:
             messagebox.showerror("Error", "All fields are required.")
-            self.update_status_enc("",2)
+            self.update_status_enc("", 2)
             return
 
         # Start the encryption in a separate thread
@@ -149,24 +158,24 @@ class SafeSerpentApp(tk.Tk):
     def encrypt_file_thread(self, file_path, key):
         try:
             encrypted_path = self.perform_encryption(file_path, key)
-            self.update_status_enc("File Encrypted Successfully !", 0) 
+            self.update_status_enc("File Encrypted Successfully!", 0) 
             messagebox.showinfo("Success", f"File Encrypted Successfully!\nEncrypted File: {encrypted_path}")
         except Exception as e:
-            self.update_status_enc("Encryption Failed",1) 
+            self.update_status_enc("Encryption Failed", 1) 
             messagebox.showerror("Error", f"Encryption failed: {str(e)}")
         finally:
-            self.update_status_enc("",2)  
+            self.update_status_enc("", 2)  
 
     def decrypt_file(self):
        
-        self.update_status_dec("Decrypting ...",2)
+        self.update_status_dec("Decrypting ...", 2)
         
         file_path = self.dec_file_path.get()
         key = hashlib.sha256(self.dec_key.get().encode()).digest()
 
         if not file_path or not key:
             messagebox.showerror("Error", "All fields are required.")
-            self.update_status_dec("",2)
+            self.update_status_dec("", 2)
             return
 
         # Start the decryption in a separate thread
@@ -175,13 +184,13 @@ class SafeSerpentApp(tk.Tk):
     def decrypt_file_thread(self, file_path, key):
         try:
             decrypted_path = self.perform_decryption(file_path, key)
-            self.update_status_dec("File Decrypted Successfully !",0)
+            self.update_status_dec("File Decrypted Successfully!", 0)
             messagebox.showinfo("Success", f"File Decrypted Successfully!\nDecrypted File: {decrypted_path}")
         except Exception as e:
-            self.update_status_dec("Decryption Failed",1)
+            self.update_status_dec("Decryption Failed", 1)
             messagebox.showerror("Error", f"Decryption Failed: Please Check Your Selected File or the Key.")
         finally:
-            self.update_status_dec("",2)  
+            self.update_status_dec("", 2)  
 
     def update_status_enc(self, message, tag):
         if tag == 0:
@@ -203,7 +212,7 @@ class SafeSerpentApp(tk.Tk):
 
 
     # Function to encrypt a file in chunks
-    def perform_encryption(self,input_file, key):
+    def perform_encryption(self, input_file, key):
         chunk_size = 64 * 1024  # 64KB chunks
         encrypted_file_path = input_file + ".enc"
         nonce = os.urandom(12)
@@ -221,7 +230,7 @@ class SafeSerpentApp(tk.Tk):
                 f_out.write(ciphertext)
         return encrypted_file_path
     
-    def add_decrypted_to_filename(self,file_path):
+    def add_decrypted_to_filename(self, file_path):
         # Split the file path into directory and base name
         directory, base_name = os.path.split(file_path)
         # Split the base name into file name and extension
@@ -234,10 +243,10 @@ class SafeSerpentApp(tk.Tk):
 
 
     # Function to decrypt a file in chunks
-    def perform_decryption(self,input_file, key):
+    def perform_decryption(self, input_file, key):
         chunk_size = 64 * 1024  # 64KB chunks
         decrypted_file_path = self.add_decrypted_to_filename(input_file[:-4])
-        print
+        
         with open(input_file, 'rb') as f_in, open(decrypted_file_path, 'wb') as f_out:
             nonce = f_in.read(12)
             aesgcm = AESGCM(key)
