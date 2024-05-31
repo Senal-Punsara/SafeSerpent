@@ -39,7 +39,12 @@ cd SafeSerpent
 Install the required dependencies:
 
 ```bash
+# for Windows and MacOS
 pip install -r requirements.txt
+
+# for linux
+chmod +x install_libraries.sh
+./install_libraries.sh 
 ```
 ### Run the Programme
 
