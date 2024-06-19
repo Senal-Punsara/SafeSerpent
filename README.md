@@ -110,9 +110,9 @@ We welcome contributions to SafeSerpent! If you have any ideas, bug reports, or 
 
 ## License
 
-SafeSerpent is licensed under the MIT License. See the [LICENSE](https://github.com/Senal-Punsara/SafeSerpent/blob/dev/LICENSE) file for more details.
+SafeSerpent is licensed under the MIT License. See the [LICENSE](https://github.com/Senal-Punsara/SafeSerpent/blob/main/LICENSE) file for more details.
 
-This project incorporates with third-party libraries. See the [THIRD_PARTY_LICENSES](https://github.com/Senal-Punsara/SafeSerpent/blob/dev/THIRD_PARTY_LICENSES) file for more details.
+This project incorporates with third-party libraries. See the [THIRD_PARTY_LICENSES](https://github.com/Senal-Punsara/SafeSerpent/blob/main/THIRD_PARTY_LICENSES) file for more details.
 
 ## Contact
 For any inquiries or support, please send a mail at kksenalpunsara@gmail.com.
